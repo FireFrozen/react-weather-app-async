@@ -1,24 +1,68 @@
-import logo from './logo.svg';
+
 import './App.css';
+import WeatherForm from './components/WeatherForm';
+import WeatherInfo from './components/WeatherInfo';
+import {WEATHER_KEY} from './keys.js';
+import { useState } from 'react';
 
 function App() {
+
+  const stateInit = {
+    temperature: '',
+    description: '',
+    himidity:'',
+    wind_speed:'',
+    city:'',
+    country:'',
+    icon:'',
+    error: null
+  };
+
+  const [state,setState] = useState(stateInit)
+
+  async function getWeather(e){
+    e.preventDefault();
+    
+    const {city, country} = e.target.elements;
+    const cityValue = city.value;
+    const countryValue = country.value;
+
+    if (cityValue && countryValue){
+      const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue},${countryValue}&appid=${WEATHER_KEY}&units=metric`;
+      const response = await fetch(API_URL);
+      const data = await response.json();
+
+      console.log(data);
+
+      //const iconLink = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+
+      setState({
+        temperature: data.main.temp,
+        description: data.weather[0].description,
+        humidity: data.main.humidity,
+        wind_speed: data.wind.speed,
+        city: data.name,
+        country: data.sys.country,
+        icon: data.weather[0].icon,
+        error: null
+      })
+    } else{
+        setState({error:'Please enter a city and country'})
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className = "container p-4"> 
+      <div className='row'>
+        <div className='col-md-6 mx-auto'>
+          <WeatherForm getWeather={getWeather}/>
+          <WeatherInfo {...state}/>
+        </div>
+      </div>
+
     </div>
+
+
   );
 }
 
