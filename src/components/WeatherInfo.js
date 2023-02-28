@@ -11,7 +11,8 @@ const WeatherInfo = props =>(
             </div>
         }
 
-        {props.temperature ?
+        {
+            props.recuperado ?
             <div className="card card-body">
                 
                 {props.city && props.country &&
@@ -41,9 +42,19 @@ const WeatherInfo = props =>(
                 }   
             </div>
             :
-            <div className="card card-body">
-                <p>Not request yet</p>
-            </div>
+                <div>
+                {
+                    props.loading ?   
+                    <div className="card card-body">
+                    <p>Not request yet</p>
+                    </div>
+                    :
+                    <div>
+                        
+                    </div>
+                }
+               
+                </div> 
         }
     </div>
     
