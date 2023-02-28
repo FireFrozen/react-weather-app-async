@@ -22,7 +22,9 @@ function App() {
 
   const [state,setState] = useState(stateInit)
 
-  function getWeather(e){
+  //console.log(state);
+
+  async function getWeather(e){
     e.preventDefault();
     
     const {city, country} = e.target.elements;
@@ -31,33 +33,40 @@ function App() {
 
     if (cityValue && countryValue){
       
-      setState({
-        loading: true
-      })
+      try{
 
-      const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue},${countryValue}&appid=${WEATHER_KEY}&units=metric`;
-      const response = fetch(API_URL);
-      const data = response.json();
+        setState({
+          loading: true
+        })
 
-      console.log(data);
+        const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue},${countryValue}&appid=${WEATHER_KEY}&units=metric`;
+        const response = await fetch(API_URL);
+        const data = await response.json();
 
-      //const iconLink = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+        console.log(data);
 
-      setState({
-        temperature: data.main.temp,
-        description: data.weather[0].description,
-        humidity: data.main.humidity,
-        wind_speed: data.wind.speed,
-        city: data.name,
-        country: data.sys.country,
-        icon: data.weather[0].icon,
-        recuperado: true,
-        loading: false,
-        error: null
-      })
-    } else{
-        setState({error:'Please enter a city and country'})
-    }
+        //const iconLink = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+
+        setState({
+          temperature: data.main.temp,
+          description: data.weather[0].description,
+          humidity: data.main.humidity,
+          wind_speed: data.wind.speed,
+          city: data.name,
+          country: data.sys.country,
+          icon: data.weather[0].icon,
+          recuperado: true,
+          loading: false,
+          error: null
+        })
+
+      }catch(e){
+        setState({error:'Please enter a valid city and country'})
+      }
+
+      } else{
+          setState({error:'Please enter a city and country'})
+      }
   }
 
   return (
