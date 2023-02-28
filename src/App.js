@@ -15,12 +15,14 @@ function App() {
     city:'',
     country:'',
     icon:'',
+    recuperado:false,
+    loading:false,
     error: null
   };
 
   const [state,setState] = useState(stateInit)
 
-  async function getWeather(e){
+  function getWeather(e){
     e.preventDefault();
     
     const {city, country} = e.target.elements;
@@ -28,9 +30,14 @@ function App() {
     const countryValue = country.value;
 
     if (cityValue && countryValue){
+      
+      setState({
+        loading: true
+      })
+
       const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue},${countryValue}&appid=${WEATHER_KEY}&units=metric`;
-      const response = await fetch(API_URL);
-      const data = await response.json();
+      const response = fetch(API_URL);
+      const data = response.json();
 
       console.log(data);
 
@@ -44,6 +51,8 @@ function App() {
         city: data.name,
         country: data.sys.country,
         icon: data.weather[0].icon,
+        recuperado: true,
+        loading: false,
         error: null
       })
     } else{
